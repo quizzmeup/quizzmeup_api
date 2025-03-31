@@ -1,0 +1,30 @@
+{
+  "name": "quizzmeup_api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node src/scripts/seed.js",
+    "start": "node src/index.js",
+    "console": "node src/scripts/console.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.6.0",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-fileupload": "^1.5.1",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.13.1",
+    "morgan": "^1.10.0",
+    "pluralize": "^8.0.0",
+    "uid2": "^1.0.0"
+  }
+}
