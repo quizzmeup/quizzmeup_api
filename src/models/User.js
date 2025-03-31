@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const TOKEN_EXPIRATION = "7d";
 
 const UserSchema = new mongoose.Schema(
@@ -8,7 +9,18 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     salt: { type: String, required: true },
     passwordHash: { type: String, required: true },
-    token: { type: String },
+
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+
+    isAdmin: { type: Boolean, default: false },
+
+    cohorts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cohort",
+      },
+    ],
   },
   { timestamps: true }
 );
