@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const connectToDatabase = require("../config/database");
 const authRoutes = require("./routes/auth");
 const cohortsRoutes = require("./routes/cohorts_route");
+const submissionRoutes = require("./routes/submission");
 const { NotFoundError } = require("./utils/errors");
 const errorHandler = require("./middlewares/error-handler");
 const userRoutes = require("./routes/user");
@@ -24,6 +25,7 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/cohorts", cohortsRoutes);
 app.use(userRoutes);
+app.use("/api", submissionRoutes);
 
 // Root page
 app.get("/", (req, res) => {
