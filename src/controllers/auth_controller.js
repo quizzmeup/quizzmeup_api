@@ -34,13 +34,13 @@ const AuthController = {
 
     // 🔑 Génération du salt et hash du mot de passe
     const salt = uid2(16);
-    const passwordHash = bcrypt.hashSync(password + salt, 10);
+    const hash = bcrypt.hashSync(password + salt, 10);
 
     // 🔑 Création de l'utilisateur
     const newUser = new User({
       email,
       salt,
-      passwordHash,
+      hash,
     });
     await newUser.save();
 
@@ -69,13 +69,13 @@ const AuthController = {
     }
 
     // 📌 Récupération de l'utilisateur avec son salt et son hash
-    const user = await User.findOne({ email }).select("+salt +passwordHash");
+    const user = await User.findOne({ email }).select("+salt +hash");
 
     if (!user) {
       return next(new NotFoundError(null, { modelName: "User" }));
     }
 
-    if (!bcrypt.compareSync(password + user.salt, user.passwordHash)) {
+    if (!bcrypt.compareSync(password + user.salt, user.hash)) {
       return next(new UnauthorizedError("Invalid credentials"));
     }
 

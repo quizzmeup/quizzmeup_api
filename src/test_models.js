@@ -52,7 +52,7 @@ const Answer = require("./models/Answer");
     const user = await User.create({
       email: "test@example.com",
       salt: "abc",
-      passwordHash: "xxx",
+      hash: "xxx",
       firstName: "Alice",
       lastName: "Dupont",
       cohorts: [cohort1._id],

@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
     salt: { type: String, required: true },
-    passwordHash: { type: String, required: true },
+    hash: { type: String, required: true },
 
     name: { type: String, required: true },
 
@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.methods.comparePassword = function (password) {
-  return bcrypt.compareSync(password + this.salt, this.passwordHash);
+  return bcrypt.compareSync(password + this.salt, this.hash);
 };
 
 UserSchema.methods.generateToken = function () {
