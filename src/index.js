@@ -6,6 +6,7 @@ const connectToDatabase = require("../config/database");
 const authRoutes = require("./routes/auth");
 const { NotFoundError } = require("./utils/errors");
 const errorHandler = require("./middlewares/error-handler");
+const userRoutes = require("./routes/user");
 
 // Load environment variables
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(morgan("dev"));
 
 // Add routes
 app.use("/api/auth", authRoutes);
+app.use(userRoutes);
 
 // Root page
 app.get("/", (req, res) => {
