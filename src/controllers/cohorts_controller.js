@@ -1,8 +1,16 @@
-const { AppError, ConflictError } = require("../utils/errors");
+const { AppError, ConflictError, NotFoundError } = require("../utils/errors");
 const Cohort = require("../models/Cohort");
 
 const getAllCohorts = async (req, res, next) => {
-  res.status(200).json("ok");
+  //fecth all cohorts and get only _id and name field
+  const allCohorts = await Cohort.find({}, "_id, name");
+
+  //if non cohort exist
+  if (allCohorts.length === 0) {
+    return next(new NotFoundError("No existing cohort"));
+  }
+
+  res.status(200).json(allCohorts);
 };
 
 const createCohort = async (req, res, next) => {
