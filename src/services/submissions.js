@@ -63,8 +63,7 @@ module.exports = {
     if (!submission) throw new NotFoundError("Soumission introuvable");
 
     const answers = await Answer.find({ submission: submission._id }).populate(
-      "question",
-      "title points rightAnswers propositions"
+      "question"
     );
 
     return {

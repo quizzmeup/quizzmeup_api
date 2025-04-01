@@ -30,7 +30,7 @@ module.exports = async function prepareAnswersWithScore(
     }
 
     answers.push({
-      question: question._id,
+      question: question,
       submission: submission._id,
       submittedAnswers: submitted,
       score,

@@ -8,6 +8,7 @@ class ShowSubmissionSerializer extends BaseSubmissionSerializer {
       question: {
         _id: answer.question._id,
         title: answer.question.title,
+        markdownCode: answer.question.markdownCode,
         points: answer.question.points,
         rightAnswers: answer.question.rightAnswers,
         propositions: answer.question.propositions,
