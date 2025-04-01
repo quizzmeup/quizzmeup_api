@@ -11,12 +11,13 @@ const {
 const AuthController = {
   // 🔑 Inscription
   signup: async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
 
     // 🔍 Vérification des champs requis
     const missingFields = [];
     if (!email) missingFields.push("email");
     if (!password) missingFields.push("password");
+    if (!name) missingFields.push("name");
 
     if (missingFields.length > 0) {
       return next(
@@ -41,6 +42,7 @@ const AuthController = {
       email,
       salt,
       hash,
+      name,
     });
     await newUser.save();
 
