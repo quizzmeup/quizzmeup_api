@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Cohort = require("../models/Cohort");
 const bcrypt = require("bcryptjs");
 const uid2 = require("uid2");
 const {
@@ -11,12 +12,13 @@ const {
 const AuthController = {
   // 🔑 Inscription
   signup: async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
 
     // 🔍 Vérification des champs requis
     const missingFields = [];
     if (!email) missingFields.push("email");
     if (!password) missingFields.push("password");
+    if (!name) missingFields.push("name");
 
     if (missingFields.length > 0) {
       return next(
@@ -41,13 +43,23 @@ const AuthController = {
       email,
       salt,
       hash,
+      name,
     });
+
+    const lastCohort = await Cohort.findOne().sort({ createdAt: -1 });
+    if (lastCohort) newUser.cohorts.push(lastCohort._id);
+
     await newUser.save();
 
     // 🎯 Réponse optimisée
     res.status(201).json({
       _id: newUser._id,
       token: newUser.generateToken(),
+      user: {
+        name: newUser.name,
+        email: newUser.email,
+        isAdmin: newUser.isAdmin,
+      },
     });
   },
 
@@ -83,7 +95,25 @@ const AuthController = {
     res.status(200).json({
       _id: user._id,
       token: user.generateToken(),
+      user: {
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+      },
     });
+  },
+
+  elevateToAdmin: async (req, res, next) => {
+    const { password } = req.body;
+
+    if (password !== process.env.ADMIN_PASSWORD) {
+      throw new UnauthorizedError("Mot de passe incorrect.");
+    }
+
+    req.user.isAdmin = true;
+    await req.user.save();
+
+    res.status(200).json({ message: "Vous êtes désormais admin." });
   },
 };
 

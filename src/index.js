@@ -6,8 +6,10 @@ const connectToDatabase = require("../config/database");
 const authRoutes = require("./routes/auth");
 const QuizRoutes = require("./routes/quiz");
 const QuizVersionsRoutes = require("./routes/quizVersions");
+const cohortsRoutes = require("./routes/cohorts_route");
 const { NotFoundError } = require("./utils/errors");
 const errorHandler = require("./middlewares/error-handler");
+const userRoutes = require("./routes/user");
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +26,8 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use(QuizRoutes);
 app.use(QuizVersionsRoutes);
+app.use("/api/cohorts", cohortsRoutes);
+app.use(userRoutes);
 
 // Root page
 app.get("/", (req, res) => {
