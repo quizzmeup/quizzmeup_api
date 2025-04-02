@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Cohort = require("../models/Cohort");
 const bcrypt = require("bcryptjs");
 const uid2 = require("uid2");
 const {
@@ -44,6 +45,10 @@ const AuthController = {
       hash,
       name,
     });
+
+    const lastCohort = await Cohort.findOne().sort({ createdAt: -1 });
+    if (lastCohort) newUser.cohorts.push(lastCohort._id);
+
     await newUser.save();
 
     // 🎯 Réponse optimisée
@@ -53,6 +58,7 @@ const AuthController = {
       user: {
         name: newUser.name,
         email: newUser.email,
+        isAdmin: newUser.isAdmin,
       },
     });
   },
@@ -92,8 +98,22 @@ const AuthController = {
       user: {
         name: user.name,
         email: user.email,
+        isAdmin: user.isAdmin,
       },
     });
+  },
+
+  elevateToAdmin: async (req, res, next) => {
+    const { password } = req.body;
+
+    if (password !== process.env.ADMIN_PASSWORD) {
+      throw new UnauthorizedError("Mot de passe incorrect.");
+    }
+
+    req.user.isAdmin = true;
+    await req.user.save();
+
+    res.status(200).json({ message: "Vous êtes désormais admin." });
   },
 };
 
