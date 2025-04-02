@@ -5,4 +5,6 @@ const asyncHandler = require("../middlewares/async-handler");
 
 router.post("/api/quizzes", asyncHandler(QuizController.postQuiz));
 
+router.get("/api/quizzes", asyncHandler(QuizController.getAllQuiz));
+
 module.exports = router;
