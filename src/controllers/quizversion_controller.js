@@ -1,5 +1,6 @@
 const QuizVersion = require("../models/QuizVersion");
 const Submission = require("../models/Submission");
+const { UnauthorizedError } = require("../utils/errors");
 
 const QuizVersionController = {
   // GET - Récupérer toutes les versions de quiz
@@ -37,19 +38,11 @@ const QuizVersionController = {
     const title = req.body.title;
     const durationInMinutes = req.body.durationInMinutes;
 
-    // on verifie qu'aucune réponse a ce quizversion n'a encore été soumise avant l'update
-
-    console.log("quizVersionId  =" + quizVersionId); // OK
-
-    const submissionExisting = await Submission.find({
-      quizVersion: quizVersionId,
-    });
-
-    if (submissionExisting.length > 0) {
-      return res.status(403).json({
-        message:
-          "Des réponses ont été soumises, impossible de modifier ce quiz",
-      });
+    const exists = await Submission.exists({ quizVersion: quizVersionId });
+    if (exists) {
+      throw new UnauthorizedError(
+        "Des réponses ont été soumises, impossible de modifier ce quiz"
+      );
     }
 
     const updatedQuizVersion = await QuizVersion.findByIdAndUpdate(
