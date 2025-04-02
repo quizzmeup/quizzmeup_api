@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Cohort = require("../models/Cohort");
 const bcrypt = require("bcryptjs");
 const uid2 = require("uid2");
 const {
@@ -44,6 +45,10 @@ const AuthController = {
       hash,
       name,
     });
+
+    const lastCohort = await Cohort.findOne().sort({ createdAt: -1 });
+    if (lastCohort) newUser.cohorts.push(lastCohort._id);
+
     await newUser.save();
 
     // 🎯 Réponse optimisée
