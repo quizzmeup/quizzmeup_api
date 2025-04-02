@@ -23,10 +23,14 @@ module.exports = {
 
     const scoreMap = await computeSubmissionScores(submissions);
 
-    return submissions.map((s) => ({
+    const data = submissions.map((s) => ({
       ...s,
       score: scoreMap[s._id.toString()] || 0,
     }));
+
+    data.sort((a, b) => b.score - a.score); // score décroissant
+
+    return data;
   },
 
   // GET /api/quizzes/:quiz_id/submissions
@@ -47,10 +51,20 @@ module.exports = {
 
     const scoreMap = await computeSubmissionScores(submissions);
 
-    return submissions.map((s) => ({
+    const data = submissions.map((s) => ({
       ...s,
       score: scoreMap[s._id.toString()] || 0,
     }));
+
+    data.sort((a, b) => {
+      const cohortA = a.cohort?.name?.toLowerCase() || "";
+      const cohortB = b.cohort?.name?.toLowerCase() || "";
+      if (cohortA < cohortB) return -1;
+      if (cohortA > cohortB) return 1;
+      return b.score - a.score; // score décroissant
+    });
+
+    return data;
   },
 
   // GET /api/submissions/:id
