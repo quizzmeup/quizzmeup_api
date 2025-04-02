@@ -22,11 +22,10 @@ const SubmissionSchema = new mongoose.Schema(
 
     startedAt: {
       type: Date,
-      required: true,
     },
 
     submittedAt: {
-      type: Date, // rempli uniquement à la soumission
+      type: Date,
     },
   },
   { timestamps: true }

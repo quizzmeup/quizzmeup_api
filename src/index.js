@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth");
 const QuizRoutes = require("./routes/quiz");
 const QuizVersionsRoutes = require("./routes/quizVersions");
 const cohortsRoutes = require("./routes/cohorts_route");
+const submissionRoutes = require("./routes/submission");
 const { NotFoundError } = require("./utils/errors");
 const errorHandler = require("./middlewares/error-handler");
 const userRoutes = require("./routes/user");
@@ -28,6 +29,7 @@ app.use(QuizRoutes);
 app.use(QuizVersionsRoutes);
 app.use("/api/cohorts", cohortsRoutes);
 app.use(userRoutes);
+app.use("/api", submissionRoutes);
 
 // Root page
 app.get("/", (req, res) => {
