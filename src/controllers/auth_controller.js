@@ -50,6 +50,10 @@ const AuthController = {
     res.status(201).json({
       _id: newUser._id,
       token: newUser.generateToken(),
+      user: {
+        name: newUser.name,
+        email: newUser.email,
+      },
     });
   },
 
@@ -85,6 +89,10 @@ const AuthController = {
     res.status(200).json({
       _id: user._id,
       token: user.generateToken(),
+      user: {
+        name: user.name,
+        email: user.email,
+      },
     });
   },
 };
