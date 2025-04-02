@@ -38,11 +38,14 @@ const QuizVersionController = {
     const durationInMinutes = req.body.durationInMinutes;
 
     // on verifie qu'aucune réponse a ce quizversion n'a encore été soumise avant l'update
-    const SubmissionExisting = await Submission.find({
-      QuizVersion: req.body.id,
-    }).populate("QuizVersion");
 
-    if (SubmissionExisting.length) {
+    console.log("quizVersionId  =" + quizVersionId); // OK
+
+    const submissionExisting = await Submission.find({
+      quizVersion: quizVersionId,
+    });
+
+    if (submissionExisting.length > 0) {
       return res.status(403).json({
         message:
           "Des réponses ont été soumises, impossible de modifier ce quiz",
