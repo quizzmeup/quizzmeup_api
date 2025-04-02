@@ -4,6 +4,8 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const connectToDatabase = require("../config/database");
 const authRoutes = require("./routes/auth");
+const QuizRoutes = require("./routes/quiz");
+const QuizVersionsRoutes = require("./routes/quizVersions");
 const cohortsRoutes = require("./routes/cohorts_route");
 const { NotFoundError } = require("./utils/errors");
 const errorHandler = require("./middlewares/error-handler");
@@ -22,6 +24,8 @@ app.use(morgan("dev"));
 
 // Add routes
 app.use("/api/auth", authRoutes);
+app.use(QuizRoutes);
+app.use(QuizVersionsRoutes);
 app.use("/api/cohorts", cohortsRoutes);
 app.use(userRoutes);
 
@@ -42,6 +46,8 @@ const startServer = async () => {
   await connectToDatabase();
 
   try {
+    //app.listen(3000, () => {
+    //console.log("🚀 Server started on port", 3000);
     app.listen(process.env.PORT, () => {
       console.log("🚀 Server started on port", process.env.PORT);
     });
