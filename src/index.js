@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const connectToDatabase = require("../config/database");
 const authRoutes = require("./routes/auth");
+const cohortsRoutes = require("./routes/cohorts_route");
 const { NotFoundError } = require("./utils/errors");
 const errorHandler = require("./middlewares/error-handler");
 const userRoutes = require("./routes/user");
@@ -21,6 +22,7 @@ app.use(morgan("dev"));
 
 // Add routes
 app.use("/api/auth", authRoutes);
+app.use("/api/cohorts", cohortsRoutes);
 app.use(userRoutes);
 
 // Root page
