@@ -25,10 +25,10 @@ app.use(morgan("dev"));
 
 // Add routes
 app.use("/api/auth", authRoutes);
-app.use(QuizRoutes);
-app.use(QuizVersionsRoutes);
+app.use("/api", QuizRoutes);
+app.use("/api", QuizVersionsRoutes);
 app.use("/api/cohorts", cohortsRoutes);
-app.use(userRoutes);
+app.use("/api", userRoutes);
 app.use("/api", submissionRoutes);
 
 // Root page
