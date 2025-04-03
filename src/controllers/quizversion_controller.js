@@ -4,6 +4,7 @@ const Quiz = require("../models/Quiz");
 const Question = require("../models/Question");
 const { NotFoundError } = require("../utils/errors");
 const { UnauthorizedError } = require("../utils/errors");
+const QuizVersionShowSerializer = require("../serializers/quiz_versions/show_serializer");
 
 const QuizVersionController = {
   // GET - Récupérer toutes les versions de quiz
@@ -33,44 +34,55 @@ const QuizVersionController = {
     if (!version)
       throw new NotFoundError("Aucune version trouvée pour ce quiz");
 
-    const questions = await Question.find({
-      quizVersion: version._id,
-    }).select("_id title markdownCode points multipleChoices propositions");
+    const questions = await Question.find({ quizVersion: version._id });
 
-    res.status(200).json({
-      _id: version._id,
-      title: version.title,
-      durationInMinutes: version.durationInMinutes,
-      questions: questions.map((q) => ({
-        _id: q._id,
-        title: q.title,
-        markdownCode: q.markdownCode,
-        points: q.points,
-        multipleChoices: q.multipleChoices,
-        propositions: q.propositions,
-        rightAnswers: q.rightAnswers,
-      })),
-    });
+    const serialized = new QuizVersionShowSerializer(
+      version,
+      questions,
+      req.user
+    ).serialize();
+
+    res.status(200).json(serialized);
   },
 
   // POST - Créer une nouvelle version de quiz
   postQuizVersion: async (req, res) => {
-    const newQuizVersions = new QuizVersion({
-      title: req.body.title,
-      durationInMinutes: req.body.durationInMinutes,
-      quiz: req.params.quizId,
+    const { title, durationInMinutes, questions = [] } = req.body;
+    const quizId = req.params.quizId;
+
+    const newQuizVersion = new QuizVersion({
+      title,
+      durationInMinutes,
+      quiz: quizId,
     });
 
-    await newQuizVersions.save();
-    res.status(201).json(newQuizVersions);
+    await newQuizVersion.save();
+
+    let createdQuestions = [];
+
+    if (questions.length > 0) {
+      const questionDocs = questions.map((q) => ({
+        ...q,
+        quizVersion: newQuizVersion._id,
+      }));
+
+      createdQuestions = await Question.insertMany(questionDocs);
+    }
+
+    const serialized = new QuizVersionShowSerializer(
+      newQuizVersion,
+      createdQuestions,
+      req.user
+    ).serialize();
+
+    res.status(201).json(serialized);
   },
 
   // PUT - Mettre à jour une QuizVersion via son ID seulement si il n'y a pas de soumissions correspondantes
   // param : ID de la QuizVersion à mettre à jour
   putQuizVersion: async (req, res) => {
     const quizVersionId = req.params.id;
-    const title = req.body.title;
-    const durationInMinutes = req.body.durationInMinutes;
+    const { title, durationInMinutes, questions = [] } = req.body;
 
     const exists = await Submission.exists({ quizVersion: quizVersionId });
     if (exists) {
@@ -79,17 +91,36 @@ const QuizVersionController = {
       );
     }
 
-    const updatedQuizVersion = await QuizVersion.findByIdAndUpdate(
+    const updatedVersion = await QuizVersion.findByIdAndUpdate(
       quizVersionId,
       { title, durationInMinutes },
       { new: true, runValidators: true }
     );
 
-    if (!updatedQuizVersion) {
-      return res.status(404).json({ message: "QuizVersion non trouvée" });
+    if (!updatedVersion) {
+      throw new NotFoundError("QuizVersion non trouvée");
     }
 
-    return res.status(200).json(updatedQuizVersion);
+    // Suppression des anciennes questions
+    await Question.deleteMany({ quizVersion: updatedVersion._id });
+
+    // Création des nouvelles questions
+    let createdQuestions = [];
+    if (questions.length > 0) {
+      const questionDocs = questions.map((q) => ({
+        ...q,
+        quizVersion: updatedVersion._id,
+      }));
+      createdQuestions = await Question.insertMany(questionDocs);
+    }
+
+    const serialized = new QuizVersionShowSerializer(
+      updatedVersion,
+      createdQuestions,
+      req.user
+    ).serialize();
+
+    res.status(200).json(serialized);
   },
 };
 
