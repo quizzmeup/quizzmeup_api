@@ -26,7 +26,6 @@ router.get("/submissions/:id", asyncHandler(submissionController.show));
 // POST /api/quizzes/:quiz_version_id/submissions
 router.post(
   "/quiz_versions/:quiz_version_id/submissions",
-  adminOnly,
   asyncHandler(submissionController.create)
 );
 
