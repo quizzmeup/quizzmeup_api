@@ -7,8 +7,8 @@ const adminOnly = require("../middlewares/admin_only");
 
 router.use(authMiddleware);
 
-router.post("/api/quizzes", adminOnly, asyncHandler(QuizController.postQuiz));
+router.post("/quizzes", adminOnly, asyncHandler(QuizController.postQuiz));
 
-router.get("/api/quizzes", asyncHandler(QuizController.getAllQuiz));
+router.get("/quizzes", asyncHandler(QuizController.getAllQuiz));
 
 module.exports = router;
