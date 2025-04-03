@@ -23,38 +23,34 @@ const QuizVersionController = {
   },
 
   getMostRecentVersionByQuizId: async (req, res, next) => {
-    try {
-      const quiz = await Quiz.findById(req.params.quizId);
-      if (!quiz) throw new NotFoundError("Quiz introuvable");
+    const quiz = await Quiz.findById(req.params.quizId);
+    if (!quiz) throw new NotFoundError("Quiz introuvable");
 
-      const version = await QuizVersion.findOne({ quiz: quiz._id }).sort({
-        createdAt: -1,
-      });
+    const version = await QuizVersion.findOne({ quiz: quiz._id }).sort({
+      createdAt: -1,
+    });
 
-      if (!version)
-        throw new NotFoundError("Aucune version trouvée pour ce quiz");
+    if (!version)
+      throw new NotFoundError("Aucune version trouvée pour ce quiz");
 
-      const questions = await Question.find({
-        quizVersion: version._id,
-      }).select("_id title markdownCode points multipleChoices propositions");
+    const questions = await Question.find({
+      quizVersion: version._id,
+    }).select("_id title markdownCode points multipleChoices propositions");
 
-      res.status(200).json({
-        _id: version._id,
-        title: version.title,
-        durationInMinutes: version.durationInMinutes,
-        questions: questions.map((q) => ({
-          _id: q._id,
-          title: q.title,
-          markdownCode: q.markdownCode,
-          points: q.points,
-          multipleChoices: q.multipleChoices,
-          propositions: q.propositions,
-          rightAnswers: q.rightAnswers,
-        })),
-      });
-    } catch (err) {
-      next(err);
-    }
+    res.status(200).json({
+      _id: version._id,
+      title: version.title,
+      durationInMinutes: version.durationInMinutes,
+      questions: questions.map((q) => ({
+        _id: q._id,
+        title: q.title,
+        markdownCode: q.markdownCode,
+        points: q.points,
+        multipleChoices: q.multipleChoices,
+        propositions: q.propositions,
+        rightAnswers: q.rightAnswers,
+      })),
+    });
   },
 
   // POST - Créer une nouvelle version de quiz
