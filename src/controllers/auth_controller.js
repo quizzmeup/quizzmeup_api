@@ -50,6 +50,7 @@ const AuthController = {
     if (lastCohort) newUser.cohorts.push(lastCohort._id);
 
     await newUser.save();
+    await newUser.populate("cohorts", "id name createdAt");
 
     // 🎯 Réponse optimisée
     res.status(201).json({
@@ -59,6 +60,7 @@ const AuthController = {
         name: newUser.name,
         email: newUser.email,
         isAdmin: newUser.isAdmin,
+        cohorts: newUser.cohorts,
       },
     });
   },
@@ -81,7 +83,9 @@ const AuthController = {
     }
 
     // 📌 Récupération de l'utilisateur avec son salt et son hash
-    const user = await User.findOne({ email }).select("+salt +hash");
+    const user = await User.findOne({ email })
+      .select("+salt +hash")
+      .populate("cohorts", "id name createdAt");
 
     if (!user) {
       return next(new NotFoundError(null, { modelName: "User" }));
@@ -99,6 +103,7 @@ const AuthController = {
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
+        cohorts: user.cohorts,
       },
     });
   },

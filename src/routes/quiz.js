@@ -11,4 +11,6 @@ router.post("/quizzes", adminOnly, asyncHandler(QuizController.postQuiz));
 
 router.get("/quizzes", asyncHandler(QuizController.getAllQuiz));
 
+router.get("/quizzes/:id", asyncHandler(QuizController.getQuiz));
+
 module.exports = router;

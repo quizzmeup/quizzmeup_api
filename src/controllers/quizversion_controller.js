@@ -27,9 +27,8 @@ const QuizVersionController = {
     const quiz = await Quiz.findById(req.params.quizId);
     if (!quiz) throw new NotFoundError("Quiz introuvable");
 
-    const version = await QuizVersion.findOne({ quiz: quiz._id }).sort({
-      createdAt: -1,
-    });
+    const version = await quiz.latestVersion();
+    console.log(version);
 
     if (!version)
       throw new NotFoundError("Aucune version trouvée pour ce quiz");
