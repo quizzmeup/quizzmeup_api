@@ -15,6 +15,22 @@ const QuizController = {
 
     res.status(201).json(allQuiz);
   },
+
+  getQuiz: async (req, res) => {
+    const quiz = await Quiz.findById(req.params.id);
+    if (!quiz) throw new NotFoundError("Quiz introuvable");
+
+    const latestVersion = await quiz.latestVersion();
+    const questionsCount = latestVersion
+      ? await latestVersion.questionsCount()
+      : 0;
+
+    res.status(200).json({
+      id: quiz._id,
+      title: quiz.title,
+      questionsCount,
+    });
+  },
 };
 
 module.exports = QuizController;
