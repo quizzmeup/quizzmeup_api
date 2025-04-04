@@ -28,7 +28,6 @@ const QuizVersionController = {
     if (!quiz) throw new NotFoundError("Quiz introuvable");
 
     const version = await quiz.latestVersion();
-    console.log(version);
 
     if (!version)
       throw new NotFoundError("Aucune version trouvée pour ce quiz");
