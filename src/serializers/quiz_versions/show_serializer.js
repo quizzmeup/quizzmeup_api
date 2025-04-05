@@ -10,6 +10,8 @@ class QuizVersionShowSerializer {
       _id: this.version._id,
       title: this.version.title,
       durationInMinutes: this.version.durationInMinutes,
+      isPublished: this.version.isPublished,
+      quizId: this.version.quiz,
       questions: this.questions.map((q) => {
         const base = {
           _id: q._id,

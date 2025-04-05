@@ -101,6 +101,10 @@ module.exports = {
     await assertCohortExists(cohortId);
     await assertSubmissionNotExists(user, quizVersionId, cohortId);
 
+    if (!version.isPublished) {
+      throw new UnauthorizedError("Ce quiz n'est pas encore publié");
+    }
+
     const submission = new Submission({
       user,
       quizVersion: quizVersionId,
