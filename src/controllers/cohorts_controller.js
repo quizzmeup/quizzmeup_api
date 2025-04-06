@@ -1,5 +1,7 @@
-const { AppError, ConflictError, NotFoundError } = require("../utils/errors");
+const { NotFoundError } = require("../utils/errors");
 const Cohort = require("../models/Cohort");
+const Quiz = require("../models/Quiz");
+const findCohortsWithSubmissionsForQuiz = require("../services/cohorts/findCohortsWithSubmissionsForQuiz");
 
 const getAllCohorts = async (req, res, next) => {
   //fecth all cohorts and get only _id and name field
@@ -18,4 +20,20 @@ const createCohort = async (req, res, next) => {
   res.status(201).json(newCohort);
 };
 
-module.exports = { getAllCohorts, createCohort };
+// GET /quizzes/:quizId/cohorts_with_submissions
+getCohortsWithSubmissions = async (req, res, next) => {
+  const { quizId } = req.params;
+
+  const quiz = await Quiz.findById(quizId);
+  if (!quiz) throw new NotFoundError("Quiz introuvable");
+
+  const cohorts = await findCohortsWithSubmissionsForQuiz(quiz);
+
+  res.json(cohorts);
+};
+
+module.exports = {
+  getAllCohorts,
+  createCohort,
+  getCohortsWithSubmissions,
+};
