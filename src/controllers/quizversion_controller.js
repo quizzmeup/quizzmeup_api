@@ -30,13 +30,12 @@ const QuizVersionController = {
     if (!quiz) throw new NotFoundError("Quiz introuvable");
 
     const includeUnpublished = req.query.includeUnpublished === "true";
-    const isOwner = quiz.creator?.toString() === req.user._id.toString();
 
-    // if (includeUnpublished && !isOwner) {
-    //   throw new UnauthorizedError(
-    //     "Seul le créateur du quiz peut accéder aux versions non publiées"
-    //   );
-    // }
+    if (includeUnpublished && !req.user.isAdmin) {
+      throw new UnauthorizedError(
+        "Seul un administrateur peut accéder aux versions non publiées"
+      );
+    }
 
     const version = includeUnpublished
       ? await quiz.latestVersion()
