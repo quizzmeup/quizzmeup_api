@@ -15,7 +15,7 @@ const QuizController = {
     const filters = {};
 
     if (title) {
-      filters.title = new RegExp(title, "i");
+      filters.title = new RegExp(title, "gi");
     }
 
     const allQuiz = await Quiz.find(filters);
