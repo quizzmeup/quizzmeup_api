@@ -2,12 +2,13 @@ const QuizVersion = require("../models/QuizVersion");
 const Submission = require("../models/Submission");
 const Quiz = require("../models/Quiz");
 const Question = require("../models/Question");
-const { NotFoundError } = require("../utils/errors");
+const { NotFoundError, BadRequestError } = require("../utils/errors");
 const { UnauthorizedError } = require("../utils/errors");
 const QuizVersionShowSerializer = require("../serializers/quiz_versions/show_serializer");
 
 const QuizVersionController = {
   // GET - Récupérer toutes les versions de quiz
+  // Cette route semble inutile
   getQuizVersions: async (req, res) => {
     const quizVersions = await QuizVersion.find();
     return res.status(200).json({ message: quizVersions });
@@ -15,6 +16,7 @@ const QuizVersionController = {
 
   // GET - Récupérer toutes les versions d'un quiz spécifique via son ID
   // param : ID du quiz
+  // Cette route semble inutile
   getQuizVersionsByQuizId: async (req, res) => {
     const quizVersions = await QuizVersion.find({
       quiz: req.params.quizId,
@@ -23,14 +25,25 @@ const QuizVersionController = {
     return res.status(200).json({ quizVersions });
   },
 
-  getMostRecentVersionByQuizId: async (req, res, next) => {
+  getMostRecentVersionByQuizId: async (req, res) => {
     const quiz = await Quiz.findById(req.params.quizId);
     if (!quiz) throw new NotFoundError("Quiz introuvable");
 
-    const version = await quiz.latestVersion();
+    const includeUnpublished = req.query.includeUnpublished === "true";
 
-    if (!version)
+    if (includeUnpublished && !req.user.isAdmin) {
+      throw new UnauthorizedError(
+        "Seul un administrateur peut accéder aux versions non publiées"
+      );
+    }
+
+    const version = includeUnpublished
+      ? await quiz.latestVersion()
+      : await quiz.latestPublishedVersion();
+
+    if (!version) {
       throw new NotFoundError("Aucune version trouvée pour ce quiz");
+    }
 
     const questions = await Question.find({ quizVersion: version._id });
 
@@ -119,6 +132,25 @@ const QuizVersionController = {
     ).serialize();
 
     res.status(200).json(serialized);
+  },
+
+  publish: async (req, res) => {
+    const { id } = req.params;
+
+    const quizVersion = await QuizVersion.findById(id);
+    if (!quizVersion) throw new NotFoundError("QuizVersion non trouvée");
+
+    const questionCount = await Question.countDocuments({ quizVersion: id });
+    if (questionCount === 0) {
+      throw new BadRequestError(
+        "Impossible de publier un quiz sans questions."
+      );
+    }
+
+    quizVersion.isPublished = true;
+    await quizVersion.save();
+
+    res.status(200).json({ message: "Quiz publié avec succès" });
   },
 };
 

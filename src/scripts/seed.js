@@ -121,6 +121,7 @@ const Answer = require("../models/Answer");
       title: "Quiz React useEffect v1",
       durationInMinutes: 20,
       quiz: quiz1._id,
+      isPublished: true,
     });
     const q1v1 = await Question.create({
       ...useEffectQ1,
@@ -140,6 +141,7 @@ const Answer = require("../models/Answer");
       title: "Quiz React useEffect v2",
       durationInMinutes: 20,
       quiz: quiz1._id,
+      isPublished: true,
     });
     const q1v2 = await Question.create({
       ...useEffectQ1,
@@ -160,6 +162,7 @@ const Answer = require("../models/Answer");
       title: "Quiz React Context v1",
       durationInMinutes: 15,
       quiz: quiz2._id,
+      isPublished: true,
     });
 
     const ctxQ1 = await Question.create({

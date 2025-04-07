@@ -7,8 +7,19 @@ const QuizSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-QuizSchema.methods.latestVersion = function () {
-  return mongoose
+QuizSchema.statics.withPublishedVersions = async function (filters) {
+  const quizIds = await mongoose
+    .model("QuizVersion")
+    .distinct("quiz", { isPublished: true });
+
+  return this.find({
+    _id: { $in: quizIds },
+    ...filters,
+  });
+};
+
+QuizSchema.methods.latestVersion = async function () {
+  return await mongoose
     .model("QuizVersion")
     .findOne({ quiz: this._id })
     .sort({ createdAt: -1 });
@@ -21,6 +32,14 @@ QuizSchema.methods.getQuizVersionIds = async function () {
     .select("_id");
 
   return versions.map((v) => v._id);
+
+QuizSchema.methods.latestPublishedVersion = async function () {
+  return await mongoose
+    .model("QuizVersion")
+    .findOne({ quiz: this._id, isPublished: true })
+    .sort({
+      createdAt: -1,
+    });
 };
 
 module.exports = mongoose.model("Quiz", QuizSchema);
