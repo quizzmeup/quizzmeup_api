@@ -11,7 +11,14 @@ const QuizController = {
   },
 
   getAllQuiz: async (req, res) => {
-    const allQuiz = await Quiz.find();
+    let title = req.query.title;
+    const filters = {};
+
+    if (title) {
+      filters.title = new RegExp(title, "gi");
+    }
+
+    const allQuiz = await Quiz.find(filters);
 
     res.status(201).json(allQuiz);
   },
