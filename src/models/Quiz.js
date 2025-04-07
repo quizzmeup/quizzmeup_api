@@ -32,6 +32,7 @@ QuizSchema.methods.getQuizVersionIds = async function () {
     .select("_id");
 
   return versions.map((v) => v._id);
+};
 
 QuizSchema.methods.latestPublishedVersion = async function () {
   return await mongoose

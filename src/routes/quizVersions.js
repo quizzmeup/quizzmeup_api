@@ -40,4 +40,10 @@ router.get(
   asyncHandler(QuizVersionController.getMostRecentVersionByQuizId)
 );
 
+router.delete(
+  "/quiz_versions/:id",
+  adminOnly,
+  asyncHandler(QuizVersionController.deleteQuizVersion)
+);
+
 module.exports = router;

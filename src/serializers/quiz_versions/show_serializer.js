@@ -1,7 +1,8 @@
 class QuizVersionShowSerializer {
-  constructor(quizVersion, questions = [], currentUser = null) {
+  constructor(quizVersion, questions = [], hasSubmissions, currentUser = null) {
     this.version = quizVersion;
     this.questions = questions;
+    this.hasSubmissions = hasSubmissions;
     this.currentUser = currentUser;
   }
 
@@ -11,6 +12,7 @@ class QuizVersionShowSerializer {
       title: this.version.title,
       durationInMinutes: this.version.durationInMinutes,
       isPublished: this.version.isPublished,
+      hasSubmissions: !!this.hasSubmissions,
       quizId: this.version.quiz,
       questions: this.questions.map((q) => {
         const base = {
