@@ -14,6 +14,12 @@ const QuizController = {
 
   getAllQuiz: async (req, res) => {
     const includeUnpublished = req.query.includeUnpublished === "true";
+    let title = req.query.title;
+    const filters = {};
+
+    if (title) {
+      filters.title = new RegExp(title, "gi");
+    }
 
     if (includeUnpublished) {
       if (!req.user.isAdmin) {
@@ -22,11 +28,11 @@ const QuizController = {
         );
       }
 
-      const allQuizzes = await Quiz.find();
-      return res.json(allQuizzes);
+      const quizzes = await Quiz.find(filters);
+      return res.json(quizzes);
     }
 
-    const quizzes = await Quiz.withPublishedVersions();
+    const quizzes = await Quiz.withPublishedVersions(filters);
     const submissionMap = await findSubmissionsByQuizIdForUser(
       quizzes,
       req.user._id

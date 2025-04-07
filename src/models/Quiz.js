@@ -7,12 +7,12 @@ const QuizSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-QuizSchema.statics.withPublishedVersions = async function () {
+QuizSchema.statics.withPublishedVersions = async function (filters) {
   const quizIds = await mongoose
     .model("QuizVersion")
     .distinct("quiz", { isPublished: true });
 
-  return this.find({ _id: { $in: quizIds } });
+  return this.find({ _id: { $in: quizIds } }, ...filters);
 };
 
 QuizSchema.methods.latestVersion = async function () {
