@@ -45,11 +45,15 @@ const QuizVersionController = {
       throw new NotFoundError("Aucune version trouvée pour ce quiz");
     }
 
+    const hasSubmissions = await Submission.exists({
+      quizVersion: version._id,
+    });
     const questions = await Question.find({ quizVersion: version._id });
 
     const serialized = new QuizVersionShowSerializer(
       version,
       questions,
+      hasSubmissions,
       req.user
     ).serialize();
 
@@ -151,6 +155,23 @@ const QuizVersionController = {
     await quizVersion.save();
 
     res.status(200).json({ message: "Quiz publié avec succès" });
+  },
+
+  deleteQuizVersion: async (req, res) => {
+    const { id } = req.params;
+
+    const hasSubmissions = await Submission.exists({ quizVersion: id });
+
+    if (hasSubmissions) {
+      return res.status(409).json({
+        message:
+          "Impossible de supprimer cette version : des soumissions existent déjà.",
+      });
+    }
+
+    await QuizVersion.findByIdAndDelete(id);
+
+    return res.status(204).send();
   },
 };
 
