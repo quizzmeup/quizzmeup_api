@@ -25,6 +25,14 @@ QuizSchema.methods.latestVersion = async function () {
     .sort({ createdAt: -1 });
 };
 
+QuizSchema.methods.getQuizVersionIds = async function () {
+  const versions = await mongoose
+    .model("QuizVersion")
+    .find({ quiz: this._id })
+    .select("_id");
+
+  return versions.map((v) => v._id);
+
 QuizSchema.methods.latestPublishedVersion = async function () {
   return await mongoose
     .model("QuizVersion")

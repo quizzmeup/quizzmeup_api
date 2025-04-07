@@ -27,7 +27,7 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api", QuizRoutes);
 app.use("/api", QuizVersionsRoutes);
-app.use("/api/cohorts", cohortsRoutes);
+app.use("/api", cohortsRoutes);
 app.use("/api", userRoutes);
 app.use("/api", submissionRoutes);
 
