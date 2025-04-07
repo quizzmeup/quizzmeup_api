@@ -12,7 +12,10 @@ QuizSchema.statics.withPublishedVersions = async function (filters) {
     .model("QuizVersion")
     .distinct("quiz", { isPublished: true });
 
-  return this.find({ _id: { $in: quizIds } }, ...filters);
+  return this.find({
+    _id: { $in: quizIds },
+    ...filters,
+  });
 };
 
 QuizSchema.methods.latestVersion = async function () {
