@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const QuizVersionSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    durationInMinutes: { type: Number, required: true },
+    durationInMinutes: { type: Number },
+    isPublished: { type: Boolean, default: false },
     quiz: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Quiz",

@@ -11,20 +11,30 @@ router.get(
   "/quiz_versions",
   asyncHandler(QuizVersionController.getQuizVersions)
 );
+
 router.get(
   "/quizzes/:quizId/quiz_versions",
   asyncHandler(QuizVersionController.getQuizVersionsByQuizId)
 );
+
 router.post(
   "/quizzes/:quizId/quiz_versions",
   adminOnly,
   asyncHandler(QuizVersionController.postQuizVersion)
 );
+
 router.put(
   "/quiz_versions/:id",
   adminOnly,
   asyncHandler(QuizVersionController.putQuizVersion)
 );
+
+router.put(
+  "/quiz_versions/:id/publish",
+  adminOnly,
+  asyncHandler(QuizVersionController.publish)
+);
+
 router.get(
   "/quizzes/:quizId/most_recent_quiz_version",
   asyncHandler(QuizVersionController.getMostRecentVersionByQuizId)
