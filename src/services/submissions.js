@@ -7,7 +7,11 @@ const Cohort = require("../models/Cohort");
 const prepareAnswersWithScore = require("./answers/prepareAnswersWithScore");
 const computeSubmissionScores = require("./aggregates/submissionScores");
 
-const { NotFoundError, ConflictError } = require("../utils/errors");
+const {
+  NotFoundError,
+  ConflictError,
+  UnauthorizedError,
+} = require("../utils/errors");
 
 module.exports = {
   // GET /api/users/:user_id/submissions
@@ -97,11 +101,13 @@ module.exports = {
     cohortId,
     answersPayload,
   }) {
-    await assertQuizVersionExists(quizVersionId);
+    const quizVersion = await assertQuizVersionExists(quizVersionId);
     await assertCohortExists(cohortId);
     await assertSubmissionNotExists(user, quizVersionId, cohortId);
 
-    if (!version.isPublished) {
+    console.log("quizVersion", quizVersion);
+    console.log("quizVersion.isPublished", quizVersion.isPublished);
+    if (!quizVersion.isPublished) {
       throw new UnauthorizedError("Ce quiz n'est pas encore publié");
     }
 
@@ -132,8 +138,9 @@ module.exports = {
 };
 
 async function assertQuizVersionExists(quizVersionId) {
-  const exists = await QuizVersion.exists({ _id: quizVersionId });
-  if (!exists) throw new NotFoundError("Version du quiz introuvable");
+  const quizVersion = await QuizVersion.findOne({ _id: quizVersionId });
+  if (!quizVersion) throw new NotFoundError("Version du quiz introuvable");
+  return quizVersion;
 }
 
 async function assertCohortExists(cohortId) {
