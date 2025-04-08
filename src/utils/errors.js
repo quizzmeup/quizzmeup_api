@@ -1,4 +1,3 @@
-
 const pluralize = require("pluralize");
 
 class AppError extends Error {
