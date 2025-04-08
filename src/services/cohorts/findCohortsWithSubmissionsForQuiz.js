@@ -18,7 +18,9 @@ const findCohortsWithSubmissionsForQuiz = async (quiz) => {
   if (cohortIds.length === 0) return [];
 
   // 4. Récupérer les cohortes correspondantes (le service retourne les objets Mongoose bruts)
-  const cohorts = await Cohort.find({ _id: { $in: cohortIds } });
+  const cohorts = await Cohort.find({ _id: { $in: cohortIds } }).sort({
+    createdAt: -1,
+  });
 
   return cohorts;
 };
