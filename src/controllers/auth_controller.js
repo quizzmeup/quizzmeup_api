@@ -92,7 +92,7 @@ const AuthController = {
     }
 
     if (!bcrypt.compareSync(password + user.salt, user.hash)) {
-      return next(new UnauthorizedError("Invalid credentials"));
+      return next(new UnauthorizedError("email ou mot de passe invalide"));
     }
 
     // 🎯 Réponse optimisée
