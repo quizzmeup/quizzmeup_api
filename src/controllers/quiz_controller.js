@@ -62,6 +62,15 @@ const QuizController = {
       questionsCount,
     });
   },
+
+  deleteQuiz: async (req, res) => {
+    const quiz = await Quiz.findById(req.params.id);
+    if (!quiz) throw new NotFoundError("Quiz introuvable");
+
+    await quiz.deleteOne();
+
+    res.status(204).end();
+  },
 };
 
 module.exports = QuizController;
