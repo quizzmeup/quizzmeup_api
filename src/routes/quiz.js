@@ -13,4 +13,10 @@ router.get("/quizzes", asyncHandler(QuizController.getAllQuiz));
 
 router.get("/quizzes/:id", asyncHandler(QuizController.getQuiz));
 
+router.delete(
+  "/quizzes/:id",
+  adminOnly,
+  asyncHandler(QuizController.deleteQuiz)
+);
+
 module.exports = router;
