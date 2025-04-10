@@ -84,9 +84,14 @@ const QuizVersionController = {
       createdQuestions = await Question.insertMany(questionDocs);
     }
 
+    const hasSubmissions = await Submission.exists({
+      quizVersion: newQuizVersion._id,
+    });
+
     const serialized = new QuizVersionShowSerializer(
       newQuizVersion,
       createdQuestions,
+      hasSubmissions,
       req.user
     ).serialize();
 
